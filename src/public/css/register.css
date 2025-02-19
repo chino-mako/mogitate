@@ -1,0 +1,83 @@
+.container {
+    max-width: 600px;
+    margin: 40px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+input[type="text"], input[type="number"], textarea, select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    background: #fff;
+}
+
+input::placeholder, textarea::placeholder {
+    color: #bbb;
+}
+
+input[type="file"] {
+    border: none;
+    padding: 5px;
+}
+
+.btn {
+    display: inline-block;
+    width: 48%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+    transition: background 0.3s;
+}
+
+.btn-primary {
+    background-color: #ffcc00;
+    color: #333;
+}
+
+.btn-primary:hover {
+    background-color: #e6b800;
+}
+
+.btn-secondary {
+    background-color: #ccc;
+    color: #333;
+}
+
+.btn-secondary:hover {
+    background-color: #b3b3b3;
+}
+
+.text-danger {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* ラジオボタンのデザイン */
+input[type="radio"] {
+    margin-right: 5px;
+}
