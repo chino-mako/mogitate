@@ -22,7 +22,7 @@ class ProductController extends Controller
         $products->orderBy('price', $request->sort);
     }
 
-    $products = $products->paginate(6);
+    $products = Product::with('seasons')->paginate(6);
 
     return view('index', compact('products'));
     }
@@ -64,9 +64,18 @@ class ProductController extends Controller
     {
         // バリデーションが通った後、商品情報の更新処理を行う
         $validated = $request->validated();
+        $product = Product::findOrFail($productId);
+
+        // 画像処理: 新しい画像がアップロードされた場合のみ更新
+    if ($request->hasFile('image')) {
+        $path = $request->file('image')->store('products', 'public');
+        $validated['image'] = $path;
+    } else {
+        // 画像が選択されていない場合、既存の画像を保持
+        $validated['image'] = $request->existing_image;
+    }
 
         // 商品更新処理
-        $product = Product::findOrFail($productId);
         $product->update([
             'name' => $validated['name'],
             'price' => $validated['price'],
@@ -74,17 +83,8 @@ class ProductController extends Controller
             'image' => $validated['image'],
         ]);
 
-        // 画像のアップロード処理
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('images', 'public');
-            $product->image = $imagePath;
-        }
-
         // 季節情報を更新（多対多リレーション）
         $product->seasons()->sync($request->seasons);
-
-        // 更新を保存
-        $product->save();
 
         // 商品一覧にリダイレクト
         return redirect()->route('products.index');
@@ -116,7 +116,7 @@ class ProductController extends Controller
             $validated['image'] = $imagePath;
         }
 
-        // 商品を保存
+        // 商品登録
         $product = Product::create([
             'name' => $validated['name'],
             'price' => $validated['price'],
@@ -125,9 +125,11 @@ class ProductController extends Controller
         ]);
 
         // 中間テーブルに季節情報を保存
-        $product->seasons()->attach($validated['season']);
+        if (!empty($validated['seasons'])) {
+        $product->seasons()->attach($validated['seasons']);
+}
 
-        return redirect()->route('products.index')->with('success', '商品を登録しました。');
+        return redirect()->route('products.index');
     }
 
 }

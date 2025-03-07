@@ -8,17 +8,22 @@
     <div class="container">
         <a href="{{ route('products.index') }}" class="back-link">商品一覧 > {{ $product->name }}</a>
 
-        
-        <!-- 画像アップロード -->
-        @if ($product->image)
-            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="product-image">
-        @endif
-            <input type="file" name="image">
-            @error('image')<p class="error">{{ $message }}</p>@enderror
-
         <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
+
+            <!-- 画像アップロード -->
+            @if ($product->image)
+            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="product-image">
+            @endif
+            <input type="file" name="image" >
+
+            <!-- 既存の画像を保持するためのhiddenフィールド -->
+            @if ($product->image)
+                <input type="hidden" name="existing_image" value="{{ $product->image }}">
+            @endif
+
+            @error('image')<p class="error">{{ $message }}</p>@enderror
 
             <!-- 商品名 -->
             <label>商品名</label>

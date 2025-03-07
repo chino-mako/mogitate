@@ -39,10 +39,9 @@
 
         <div class="form-group">
             <label for="seasons">季節</label>
-            <select id="seasons" name="season" class="form-control" multiple>
-                <option value="">選択してください</option>
+            <select id="seasons" name="seasons[]" class="form-control" multiple>
                 @foreach($seasons as $season)
-                    <option value="{{ $season->id }}" {{ in_array($season->id, old('season', [])) ? 'selected' : '' }}>{{ $season->name }}</option>
+                    <option value="{{ $season->id }}" {{ in_array($season->id, old('seasons', [])) ? 'selected' : '' }}>{{ $season->name }}</option>
                 @endforeach
             </select>
             @error('season')
