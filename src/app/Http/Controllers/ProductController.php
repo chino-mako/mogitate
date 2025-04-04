@@ -14,17 +14,18 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
-    $products = Product::query();
+        // クエリビルダーの作成
+        $query = Product::with('seasons');
 
+        // 並び替え処理
+        if ($request->filled('sort')) {
+            $query->orderBy('price', $request->sort);
+        }
 
-    // 並び替え機能
-    if ($request->filled('sort')) {
-        $products->orderBy('price', $request->sort);
-    }
+        // クエリを実行し、ページネーションを適用
+        $products = $query->paginate(6);
 
-    $products = Product::with('seasons')->paginate(6);
-
-    return view('index', compact('products'));
+        return view('index', compact('products'));
     }
 
     //検索機能
@@ -67,13 +68,13 @@ class ProductController extends Controller
         $product = Product::findOrFail($productId);
 
         // 画像処理: 新しい画像がアップロードされた場合のみ更新
-    if ($request->hasFile('image')) {
-        $path = $request->file('image')->store('products', 'public');
-        $validated['image'] = $path;
-    } else {
-        // 画像が選択されていない場合、既存の画像を保持
-        $validated['image'] = $request->existing_image;
-    }
+        if ($request->hasFile('image')) {
+        $imagePath = $request->file('image')->store('products', 'public');
+        $validated['image'] = 'storage/' . $imagePath;
+        } else {
+            // 画像が選択されていない場合、既存の画像を保持
+            $validated['image'] = $request->existing_image;
+        }
 
         // 商品更新処理
         $product->update([
@@ -125,9 +126,10 @@ class ProductController extends Controller
         ]);
 
         // 中間テーブルに季節情報を保存
-        if (!empty($validated['seasons'])) {
+        if (isset($validated['seasons'])) {
         $product->seasons()->attach($validated['seasons']);
-}
+        }
+
 
         return redirect()->route('products.index');
     }
